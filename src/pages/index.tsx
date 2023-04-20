@@ -106,7 +106,7 @@ export default function Home() {
             <div className="flex flex-col gap-2">
               <p className="text-lg font-bold">Content</p>
               <pre
-                className="p-4 rounded-md"
+                className="p-4 rounded-md overflow-auto"
                 style={{ background: "var(--surface-section)" }}
               >
                 {JSON.stringify(selectedEvent.content, null, 2)}
