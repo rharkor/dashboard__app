@@ -6,10 +6,14 @@ import type { AppProps } from "next/app";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/contexts/AutchContext";
 import Base from "./_base";
+import Head from "next/head";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
+      <Head>
+        <title>Backhealth</title>
+      </Head>
       <Base>
         <Component {...pageProps} />
       </Base>
