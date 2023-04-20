@@ -53,6 +53,7 @@ const Login: FC = () => {
               style={{ padding: "1rem", marginBottom: "1rem" }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
 
             <label
@@ -70,6 +71,7 @@ const Login: FC = () => {
               className="w-full mb-5"
               inputClassName="w-full p-3 md:w-30rem"
               feedback={false}
+              required
             ></Password>
             <Button
               label="Sign In"
