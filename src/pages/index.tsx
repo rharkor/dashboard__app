@@ -9,6 +9,7 @@ import Link from "next/link";
 type Event = {
   id: number;
   project: string;
+  environment: string;
   type: string;
   severity: string;
   createdAt: string;
@@ -64,6 +65,7 @@ export default function Home() {
         }}
       >
         <Column field="project" header="Project"></Column>
+        <Column field="environment" header="Environment"></Column>
         <Column field="type" header="Type"></Column>
         <Column field="severity" header="Severity"></Column>
         <Column field="createdAt" header="Created at"></Column>
@@ -80,6 +82,10 @@ export default function Home() {
             <div className="flex flex-col gap-2">
               <p className="text-lg font-bold">Project</p>
               <p>{selectedEvent.project}</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-lg font-bold">Environment</p>
+              <p>{selectedEvent.environment}</p>
             </div>
             <div className="flex flex-col gap-2">
               <p className="text-lg font-bold">Type</p>
