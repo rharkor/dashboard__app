@@ -13,6 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <AuthProvider>
       <Head>
         <title>Backhealth</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Base>
         <Component {...pageProps} />
