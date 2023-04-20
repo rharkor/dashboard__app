@@ -19,7 +19,7 @@ jobs:
       - name: Run the rec docker-compose
         run: |
           touch .env
-          echo NEXT_PUBLIC_API_URL=https://api.rec.backhealth.yuniq.agancy/ >> .env
+          echo NEXT_PUBLIC_API_URL=https://api.rec.backhealth.yuniq.agency/ >> .env
           echo ENV=rec >> .env
           echo NEXT_PUBLIC_ENVIRONMENT=rec >> .env
           docker-compose -f docker-compose.rec.yml up --build -d
