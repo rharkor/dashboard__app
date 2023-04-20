@@ -116,7 +116,13 @@ const ApiManager: FC = () => {
         </Button>
       </div>
       <DataTable value={apis} tableStyle={{ minWidth: "50rem" }}>
-        <Column field="name" header="Name"></Column>
+        <Column
+          field="name"
+          header="Name"
+          style={{
+            minWidth: "20rem",
+          }}
+        ></Column>
         <Column
           field="description"
           header="Description"
