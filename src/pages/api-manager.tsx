@@ -69,7 +69,7 @@ const ApiManager: FC = () => {
             />
           </div>
         ),
-        life: 10 * 1000 * 60,
+        sticky: true,
       });
   };
 
