@@ -3,7 +3,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { FC, useEffect, useState } from "react";
+import { Messages } from "primereact/messages";
+import { FC, useEffect, useRef, useState } from "react";
 import api from "@/utils/api";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
@@ -21,6 +22,8 @@ const ApiManager: FC = () => {
   const [deleteApiDialog, setDeleteApiDialog] = useState(false);
   const [apis, setApis] = useState<Api[]>([]);
   const [selectedApi, setSelectedApi] = useState<Api | null>(null);
+
+  const msgs = useRef<Messages>(null);
 
   const hanldeCreateApi = async (e: any) => {
     e.preventDefault();
@@ -40,6 +43,34 @@ const ApiManager: FC = () => {
     setCreateApiDescription("");
     setCreateApiModal(false);
     setApis((prev) => [...prev, res]);
+    navigator.clipboard.writeText(res.token);
+
+    if (msgs.current)
+      // Display api key copy button
+      msgs.current.show({
+        severity: "success",
+        summary: "Success",
+        closable: true,
+        content: (
+          <div className="flex flex-row gap-4 items-center">
+            <p>
+              Your api is successfully created. The access token has been copied
+              to your clipboard.
+            </p>
+            <Button
+              label="Copy"
+              icon="pi pi-copy"
+              severity="info"
+              onClick={() => {
+                navigator.clipboard.writeText(res.token);
+                toast.success("Copied to clipboard");
+              }}
+              size="small"
+            />
+          </div>
+        ),
+        life: 10 * 1000 * 60,
+      });
   };
 
   useEffect(() => {
@@ -115,6 +146,7 @@ const ApiManager: FC = () => {
           Create Api <i className="pi pi-plus"></i>
         </Button>
       </div>
+      <Messages ref={msgs} />
       <DataTable value={apis} tableStyle={{ minWidth: "50rem" }}>
         <Column
           field="name"
@@ -149,6 +181,7 @@ const ApiManager: FC = () => {
               id="name"
               value={createApiName}
               onChange={(e) => setCreateApiName(e.target.value)}
+              required
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -157,6 +190,7 @@ const ApiManager: FC = () => {
               id="description"
               value={createApiDescription}
               onChange={(e) => setCreateApiDescription(e.target.value)}
+              required
             />
           </div>
           <Button label="Create" type="submit" className="self-end"></Button>
