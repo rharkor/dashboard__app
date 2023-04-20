@@ -2,7 +2,7 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "@/utils/api";
 import Link from "next/link";
 
@@ -26,9 +26,13 @@ export default function Home() {
   );
   const [selectedRow, setSelectedRow] = useState<Event | null>(null);
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     api.fetch("events").then((res) => setEvents(res));
   }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   useEffect(() => {
     if (selectedRow) {
@@ -40,11 +44,16 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/api-manager" className="self-end">
-        <Button className="flex gap-2 w-fit">
-          Manage Api&apos;s <i className="pi pi-cog"></i>
+      <div className="flex flex-row gap-2 self-end">
+        <Button className="flex gap-2 w-fit" onClick={refresh} severity="info">
+          Refresh <i className="pi pi-refresh"></i>
         </Button>
-      </Link>
+        <Link href="/api-manager">
+          <Button className="flex gap-2 w-fit">
+            Manage Api&apos;s <i className="pi pi-cog"></i>
+          </Button>
+        </Link>
+      </div>
       <DataTable
         value={events}
         tableStyle={{ minWidth: "50rem" }}
