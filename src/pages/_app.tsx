@@ -12,8 +12,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <Head>
-        <title>Backhealth</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* <title>Next Auth Boilerplate</title> */}
+        {/* <meta name="description" content="Next Auth Boilerplate" /> */}
       </Head>
       <Base>
         <Component {...pageProps} />

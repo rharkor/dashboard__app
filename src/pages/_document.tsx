@@ -5,7 +5,6 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <meta name="description" content="A usefull tool for backend health" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body>
