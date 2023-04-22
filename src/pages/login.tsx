@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
 import { Password } from "primereact/password";
-import { useAuth } from "@/contexts/AutchContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login: FC = () => {
   const [email, setEmail] = useState("");

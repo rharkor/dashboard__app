@@ -56,10 +56,14 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const _getUser = useCallback(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const user = await api.fetch("auth/me");
-    setUser(user);
-  }, []);
+    try {
+      const user = await api.fetch("auth/me");
+      setUser(user);
+    } catch (err) {
+      setIsLogged(false);
+      await goTo("/login");
+    }
+  }, [goTo]);
 
   const login = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
@@ -85,24 +89,22 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     goTo("/login");
   }, [goTo]);
 
-  const _handleInitialLoad = useCallback(async () => {
+  const _handleInitialLoad = async () => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsLogged(true);
       await _getUser();
-      if (router.pathname === "/login") {
-        await goTo("/");
-      }
     } else {
       await goTo("/login");
       setIsLogged(false);
     }
     setInitialLoadFinished(true);
-  }, [_getUser, goTo, router]);
+  };
 
   useEffect(() => {
     _handleInitialLoad();
-  }, [_handleInitialLoad]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   api.updateToken = () => goTo("/login");
 
