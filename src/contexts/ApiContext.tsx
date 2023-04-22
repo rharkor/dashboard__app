@@ -137,6 +137,11 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
     return item;
   }, []);
 
+  const fetchItem = useCallback(async (id: string) => {
+    const item = await api.fetch(`items/one/${id}`);
+    return item;
+  }, []);
+
   const deleteItem = useCallback(async (id: string, isGroup?: boolean) => {
     const promise = new Promise<void>(async (resolve, reject) => {
       try {
@@ -166,7 +171,7 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
         createItem,
         updateItem,
         fetchParent,
-        fetchItem: fetchParent,
+        fetchItem,
         deleteItem,
       }}
     >
