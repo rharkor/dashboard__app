@@ -30,7 +30,7 @@ const FileViewDialog: FC<{
     const element = document.createElement("a");
     const newFile = new Blob([file.content], { type: "text/plain" });
     element.href = URL.createObjectURL(newFile);
-    element.download = file.filename;
+    element.download = file.originalname;
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   };
@@ -79,7 +79,7 @@ const FileViewDialog: FC<{
           <Editor
             defaultValue={""}
             value={file?.content}
-            language="json"
+            language=""
             theme="vs-dark"
             options={{
               readOnly: true,

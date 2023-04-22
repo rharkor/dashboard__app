@@ -12,7 +12,7 @@ const ItemFile = ({ item }: { item: ItemWithFile }) => {
     const element = document.createElement("a");
     const newFile = new Blob([fileContent], { type: "text/plain" });
     element.href = URL.createObjectURL(newFile);
-    element.download = item.file[0].filename;
+    element.download = item.file[0].originalname;
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   };

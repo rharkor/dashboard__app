@@ -42,7 +42,7 @@ const AddItemModal: FC<{
   const [name, setName] = useState(item?.name || "");
   const [nameHaveChanged, setNameHaveChanged] = useState(false);
   const [logo, setLogo] = useState<File | undefined>(
-    item?.logo ? createEmptyFile(item.logo[0].filename) : undefined
+    item?.logo ? createEmptyFile(item.logo[0].originalname) : undefined
   );
   const [logoHaveChanged, setLogoHaveChanged] = useState(false);
   const [type, setType] = useState<itemListType>(types[0].value);
@@ -51,7 +51,7 @@ const AddItemModal: FC<{
   const [textHaveChanged, setTextHaveChanged] = useState(false);
   const [file, setFile] = useState<File | undefined>(
     (item as ItemWithFile)?.file
-      ? createEmptyFile((item as ItemWithFile).file[0].filename)
+      ? createEmptyFile((item as ItemWithFile).file[0].originalname)
       : undefined
   );
   const [fileHaveChanged, setFileHaveChanged] = useState(false);
@@ -59,12 +59,14 @@ const AddItemModal: FC<{
   useEffect(() => {
     if (item) {
       setName(item.name);
-      setLogo(item.logo ? createEmptyFile(item.logo[0].filename) : undefined);
+      setLogo(
+        item.logo ? createEmptyFile(item.logo[0].originalname) : undefined
+      );
       setType(item.type);
       setText((item as ItemWithText)?.text || "");
       setFile(
         (item as ItemWithFile)?.file
-          ? createEmptyFile((item as ItemWithFile).file[0].filename)
+          ? createEmptyFile((item as ItemWithFile).file[0].originalname)
           : undefined
       );
     }
@@ -149,6 +151,11 @@ const AddItemModal: FC<{
         maxHeight: "200px",
         height: "200px",
       };
+    } else if (type === "file" || type === "view") {
+      return {
+        maxHeight: "136px",
+        height: "136px",
+      };
     } else {
       return {
         maxHeight: "50px",
@@ -164,6 +171,14 @@ const AddItemModal: FC<{
     } else if (mode === "edit") {
       handleUpdate(e);
     }
+  };
+
+  const handlePaste = async () => {
+    const clipboard = window.navigator.clipboard;
+    const text = await clipboard.readText();
+    const file = new File([text], "clipboard.txt");
+    setFile(file);
+    setFileHaveChanged(true);
   };
 
   return (
@@ -282,7 +297,7 @@ const AddItemModal: FC<{
             />
           )}
           {(type === "file" || type === "view") && (
-            <>
+            <div className="flex flex-col gap-2">
               <FileUpload
                 mode="basic"
                 url="/api/no-op"
@@ -299,12 +314,13 @@ const AddItemModal: FC<{
                 }}
                 id="file"
               />
+              <Button label="Paste" onClick={handlePaste} />
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-gray-500">
                   {file ? file.name : "No file chosen"}
                 </p>
               </div>
-            </>
+            </div>
           )}
         </div>
       </form>
