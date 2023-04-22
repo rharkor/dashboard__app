@@ -70,5 +70,5 @@ export type UpdateItem = {
   text?: string;
   file?: any;
   logo?: any;
-  parent?: Item | ItemParent;
+  parent?: number;
 };

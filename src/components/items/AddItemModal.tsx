@@ -104,13 +104,25 @@ const AddItemModal: FC<{
     }
     if (!item) return;
 
+    // If no changes, don't update
+    if (
+      !nameHaveChanged &&
+      !logoHaveChanged &&
+      !typeHaveChanged &&
+      !textHaveChanged &&
+      !fileHaveChanged
+    ) {
+      handleCloseCleanForm();
+      return;
+    }
+
     await updateItem(item.id.toString(), {
       name: nameHaveChanged ? name : undefined,
       logo: logoHaveChanged ? logo : undefined,
       type: typeHaveChanged ? type : undefined,
       text: textHaveChanged ? text : undefined,
       file: fileHaveChanged ? file : undefined,
-      parent,
+      parent: parent?.id || undefined,
     });
     handleCloseCleanForm();
     fetchItems(parent?.id.toString() || "");
