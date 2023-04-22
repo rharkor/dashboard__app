@@ -49,9 +49,10 @@ const EditItemOverlay = ({
   return (
     <>
       <div
-        className="absolute top-0 left-0 w-full bg-gray-900 bg-opacity-50 z-10"
+        className="absolute top-0 left-0 w-full z-10"
         style={{
           height: selected ? "100%" : "0%",
+          borderRadius: "6px",
         }}
       ></div>
       <div
@@ -59,6 +60,7 @@ const EditItemOverlay = ({
         style={{
           height: selected ? "100%" : "0%",
           transitionDuration: !selected ? "0.3s" : "0.7s",
+          borderRadius: "6px",
         }}
       >
         <div className="flex items-center justify-center flex-1">
