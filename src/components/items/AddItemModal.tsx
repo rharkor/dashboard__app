@@ -86,7 +86,7 @@ const AddItemModal: FC<{
       file,
       parent,
     });
-    handleClose();
+    handleCloseCleanForm();
     fetchItems(parent?.id.toString() || "");
     // Reset form
     setName("");
@@ -112,8 +112,12 @@ const AddItemModal: FC<{
       file: fileHaveChanged ? file : undefined,
       parent,
     });
-    handleClose();
+    handleCloseCleanForm();
     fetchItems(parent?.id.toString() || "");
+  };
+
+  const handleCloseCleanForm = () => {
+    handleClose();
     // Reset form
     setName("");
     setLogo(undefined);
@@ -129,7 +133,7 @@ const AddItemModal: FC<{
         icon="pi pi-times"
         label="Cancel"
         className="p-button-text"
-        onClick={handleClose}
+        onClick={handleCloseCleanForm}
       />
       <Button
         icon="pi pi-check"
