@@ -29,12 +29,17 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem }) => {
 
   const [selected, setSelected] = useState(false);
 
-  const bind = useLongPress((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation();
-    setSelected(true);
-  });
+  const bind = useLongPress(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+      setSelected(true);
+    },
+    {
+      cancelOutsideElement: true,
+    }
+  );
 
   return (
     <div

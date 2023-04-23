@@ -34,6 +34,7 @@ const EditItemOverlay = ({
 
   const handleEdit = () => {
     editItem(item);
+    setSelected(false);
   };
 
   const handleDeleteConfirm = () => {

@@ -88,13 +88,6 @@ const AddItemModal: FC<{
     });
     handleCloseCleanForm();
     fetchItems(parent?.id.toString() || "");
-    // Reset form
-    setName("");
-    setLogo(undefined);
-    setType(types[0].value);
-    setText("");
-    setFile(undefined);
-    (document.getElementById("create-item-form") as HTMLFormElement)?.reset();
   };
 
   const handleUpdate = async (e: any) => {
@@ -197,11 +190,34 @@ const AddItemModal: FC<{
     setFileHaveChanged(true);
   };
 
+  const handleShow = () => {
+    setNameHaveChanged(false);
+    setLogoHaveChanged(false);
+    setTypeHaveChanged(false);
+    setTextHaveChanged(false);
+    setFileHaveChanged(false);
+
+    if (item) {
+      setName(item.name);
+      setLogo(
+        item.logo ? createEmptyFile(item.logo[0].originalname) : undefined
+      );
+      setType(item.type);
+      setText((item as ItemWithText)?.text || "");
+      setFile(
+        (item as ItemWithFile)?.file
+          ? createEmptyFile((item as ItemWithFile).file[0].originalname)
+          : undefined
+      );
+    }
+  };
+
   return (
     <Dialog
       header="Create new item"
       visible={visible}
-      onHide={handleClose}
+      onHide={handleCloseCleanForm}
+      onShow={handleShow}
       footer={footer}
       style={{
         minWidth: "50vw",
