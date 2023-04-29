@@ -12,7 +12,7 @@ const Items: FC<{
   const [file, setFile] = useState<FileWithContent | null>(null);
 
   return (
-    <div className="flex flex-row gap-4 wrap justify-center items-center">
+    <div className="flex flex-row gap-4 flex-wrap justify-center items-center w-full">
       {items.map((item) => (
         <ItemCard
           key={item.id}
