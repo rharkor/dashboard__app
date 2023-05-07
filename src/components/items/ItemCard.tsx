@@ -43,7 +43,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem }) => {
 
   return (
     <div
-      className="w-[300px] h-[200px] relative"
+      className="w-[150px] h-[100px] relative shrink-0 md:w-[300px] md:h-[200px]"
       {...bind()}
       style={{
         animationName: selected ? "shake" : "none",

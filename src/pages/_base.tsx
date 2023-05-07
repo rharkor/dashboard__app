@@ -6,7 +6,7 @@ const Base: FC<PropsWithChildren> = ({ children }) => {
   const { isLoading } = useAuth();
 
   return (
-    <div className="p-4 sm:p-8 lg:p-16 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-8 lg:p-16 max-w-7xl mx-auto w-full">
       {children}
       <LoadingModal isLoading={isLoading} />
     </div>
