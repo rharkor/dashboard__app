@@ -148,9 +148,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
       setIsOver((mouseOverItem as HTMLDivElement).dataset.id || "-1");
     } else {
       resetMoveOverlay();
-      if (isOver !== null) {
-        setIsOver(null);
-      }
+      setIsOver(null);
     }
 
     setStyle({
