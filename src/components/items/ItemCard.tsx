@@ -25,7 +25,7 @@ interface ItemCardProps {
 
 export const ItemCardWrapper: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-8 p-card hover:shadow-lg transition-all duration-300 hover:scale-105 h-full relative">
+    <div className="flex flex-col gap-4 p-2 md:p-8 p-card hover:shadow-lg transition-all duration-300 hover:scale-105 h-full relative">
       {children}
     </div>
   );
@@ -123,14 +123,25 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem }) => {
 
   const handleMouseDown: EventListenerOrEventListenerObject = (e) => {
     preventDefault(e);
-    const mainDivClientRect = mainDiv.current?.getBoundingClientRect();
-    if (!mainDivClientRect) return;
-    const { clientX, clientY } = e as any;
-    const offsetX = clientX - mainDivClientRect.x + window.scrollX;
-    const offsetY = clientY - mainDivClientRect.y + window.scrollY;
-    const newInitialOffset = { x: offsetX, y: offsetY };
-    setInitialOffset(newInitialOffset);
-    setMoveSelected(true);
+    let active = true;
+    const release = () => {
+      active = false;
+    };
+    document.addEventListener("mouseup", release);
+    document.addEventListener("pointerup", release);
+    setTimeout(() => {
+      document.removeEventListener("mouseup", release);
+      document.removeEventListener("pointerup", release);
+      if (!active) return;
+      const mainDivClientRect = mainDiv.current?.getBoundingClientRect();
+      if (!mainDivClientRect) return;
+      const { clientX, clientY } = e as any;
+      const offsetX = clientX - mainDivClientRect.x + window.scrollX;
+      const offsetY = clientY - mainDivClientRect.y + window.scrollY;
+      const newInitialOffset = { x: offsetX, y: offsetY };
+      setInitialOffset(newInitialOffset);
+      setMoveSelected(true);
+    }, 100);
   };
 
   useEffect(() => {
@@ -180,12 +191,12 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem }) => {
 
   return (
     <div
-      className="w-[150px] h-[100px] relative shrink-0 md:w-[300px] md:h-[200px] max-w-[150px] md:max-w-[300px] transition-all duration-300"
+      className="w-[150px] h-[110px] relative shrink-0 md:w-[300px] md:h-[200px] max-w-[150px] md:max-w-[300px] transition-all duration-300"
       ref={parentDiv}
       style={parentStyle}
     >
       <div
-        className="w-[150px] h-[100px] relative shrink-0 md:w-[300px] md:h-[200px]"
+        className="w-[150px] h-[110px] relative shrink-0 md:w-[300px] md:h-[200px]"
         {...bind()}
         style={{
           animationName: selected ? "shake" : "none",

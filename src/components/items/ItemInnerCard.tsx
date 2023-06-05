@@ -8,7 +8,7 @@ const ItemInnerCard: FC<{
   if (item.logo) {
     return (
       <div className="flex flex-col gap-2 h-full justify-center items-center">
-        <div className="flex flex-row gap-2 items-center relative h-full w-full">
+        <div className="flex flex-row gap-2 items-center relative h-full max-h-[60%] w-full">
           <Image
             src={"/api/" + item.logo[0].path + "/" + "logo"}
             alt={item.name}
@@ -16,14 +16,18 @@ const ItemInnerCard: FC<{
             className="object-contain"
           />
         </div>
-        <h4 className="text-base md:text-lg font-semibold">{item.name}</h4>
+        <h4 className="text-base md:text-lg font-semibold overflow-hidden max-w-full text-ellipsis text-center">
+          {item.name}
+        </h4>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-2 h-full justify-center items-center">
-      <h4 className="text-xl md:text-2xl font-semibold">{item.name}</h4>
+      <h4 className="text-xl md:text-2xl font-semibold overflow-hidden max-w-full text-ellipsis text-center">
+        {item.name}
+      </h4>
     </div>
   );
 };
