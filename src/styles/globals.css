@@ -8,6 +8,7 @@
   --background-end-rgb: 255, 255, 255;
 
   --primary-color-lighten: #8ce9db;
+  --primary-color-lighten-op: #8ce9db88;
 }
 
 @media (prefers-color-scheme: dark) {

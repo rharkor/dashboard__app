@@ -8,7 +8,8 @@ export type FileWithContent = File & { content: string };
 const Items: FC<{
   items: Item[];
   editItem: (item: Item) => void;
-}> = ({ items, editItem }) => {
+  parentId?: string;
+}> = ({ items, editItem, parentId }) => {
   const [file, setFile] = useState<FileWithContent | null>(null);
 
   return (
@@ -19,6 +20,7 @@ const Items: FC<{
           item={item}
           setFile={setFile}
           editItem={editItem}
+          parentId={parentId}
         />
       ))}
       <FileViewDialog file={file} setFile={setFile} />

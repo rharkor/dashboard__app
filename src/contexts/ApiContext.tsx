@@ -26,6 +26,7 @@ export type ApiContextType = {
   fetchParent: (id: string) => Promise<ItemParent | null>;
   fetchItem: (id: string) => Promise<Item | null>;
   deleteItem: (id: string, isGroup?: boolean) => Promise<void>;
+  moveItem: (id: string, parentId: string) => Promise<void>;
 };
 
 const ApiContextInitialValue: ApiContextType = {
@@ -38,6 +39,7 @@ const ApiContextInitialValue: ApiContextType = {
   fetchParent: async () => null,
   fetchItem: async () => null,
   deleteItem: async () => {},
+  moveItem: async () => {},
 };
 
 const ApiContext = createContext<ApiContextType>(ApiContextInitialValue);
@@ -161,6 +163,24 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   }, []);
 
+  const moveItem = useCallback(async (id: string, parentId: string) => {
+    const promise = new Promise<void>(async (resolve, reject) => {
+      try {
+        const res = await api.fetch(`items/move/${id}/${parentId}`, {
+          method: "PUT",
+        });
+        resolve(res);
+      } catch (error) {
+        reject(error);
+      }
+    });
+    await toast.promise(promise, {
+      loading: "Moving item...",
+      success: "Item moved",
+      error: (err) => err.message || "Failed to move item",
+    });
+  }, []);
+
   return (
     <ApiContext.Provider
       value={{
@@ -173,6 +193,7 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
         fetchParent,
         fetchItem,
         deleteItem,
+        moveItem,
       }}
     >
       {children}

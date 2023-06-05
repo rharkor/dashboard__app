@@ -11,6 +11,7 @@ const BreadCrumb: FC<{
   model?: {
     label: string;
     command: () => void;
+    id: string;
   }[];
 }> = ({ model }) => {
   return (
@@ -21,9 +22,10 @@ const BreadCrumb: FC<{
             className={
               index === model.length - 1
                 ? "text-[var(--primary-color-lighten)]"
-                : "cursor-pointer hover:text-[var(--primary-color)]"
+                : "cursor-pointer hover:text-[var(--primary-color)]  arianne-item"
             }
             onClick={item.command}
+            data-id={item.id}
           >
             {item.label}
           </span>
@@ -77,10 +79,12 @@ const HomeId = () => {
     {
       label: "Home",
       command: () => router.push("/"),
+      id: "",
     },
     ...(parent?.parents.map((parent) => ({
       label: parent.name,
       command: () => router.push(`/${parent.id}`),
+      id: parent.id.toString(),
     })) || []),
   ];
 
@@ -106,7 +110,11 @@ const HomeId = () => {
           <BreadCrumb model={breadCrumbItems} />
         </h1>
       </div>
-      <Items items={items} editItem={setEditingItem} />
+      <Items
+        items={items}
+        editItem={setEditingItem}
+        parentId={id?.toString()}
+      />
       <Button
         icon="pi pi-plus"
         label="Add item"
