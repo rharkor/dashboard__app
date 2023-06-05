@@ -67,15 +67,15 @@ const EditItemOverlay = ({
         <div className="flex items-center justify-center flex-1">
           <Button
             label="Edit"
-            className="p-button-text"
             severity="warning"
             onClick={handleEdit}
+            className="p-button-text h-[25px] md:h-[50px]"
           />
         </div>
         <div className="flex items-center justify-center flex-1">
           <Button
             label="Delete"
-            className="p-button-text"
+            className="p-button-text h-[25px] md:h-[50px]"
             severity="danger"
             onClick={handleDelete}
           />
@@ -84,7 +84,7 @@ const EditItemOverlay = ({
           <Button
             label="Cancel"
             onClick={() => setSelected(false)}
-            className="p-button-text"
+            className="p-button-text h-[25px] md:h-[50px]"
             severity="info"
           />
         </div>

@@ -250,7 +250,7 @@ const AddItemModal: FC<{
             mode="basic"
             url="/api/no-op"
             auto
-            maxFileSize={1024 * 1024 * 10}
+            maxFileSize={1024 * 1024 * 1024}
             chooseLabel="Choose file"
             uploadLabel="Upload"
             cancelLabel="Cancel"
@@ -334,7 +334,7 @@ const AddItemModal: FC<{
                 mode="basic"
                 url="/api/no-op"
                 auto
-                maxFileSize={1024 * 1024 * 10}
+                maxFileSize={1024 * 1024 * 1024}
                 chooseLabel="Choose file"
                 uploadLabel="Upload"
                 cancelLabel="Cancel"
