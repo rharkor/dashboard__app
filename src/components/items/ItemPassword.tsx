@@ -3,21 +3,28 @@ import { ItemWithText } from "../../../types/api";
 import { ItemCardWrapper } from "./ItemCard";
 import ItemInnerCard from "./ItemInnerCard";
 import { useApi } from "@/contexts/ApiContext";
+import { useSearchParams } from "next/navigation";
 
 const ItemPassword = ({ item }: { item: ItemWithText }) => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const { fetchItem } = useApi();
 
   const handleClick = async () => {
     const decodePromise = new Promise<void>(async (resolve, reject) => {
-      const res = await fetchItem(item.id.toString());
-      if (!res) reject({ error: "Failed to fetch item" });
-      navigator.clipboard.writeText((res as ItemWithText).text);
-      resolve();
+      try {
+        const res = await fetchItem(item.id.toString(), token);
+        if (!res) reject({ error: "Failed to fetch item" });
+        navigator.clipboard.writeText((res as ItemWithText).text);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
     });
     await toast.promise(decodePromise, {
       loading: "Decoding...",
       success: "Copied to clipboard",
-      error: (err) => err.error || "Failed to decode",
+      error: (err) => err.error.toString() || "Failed to decode",
     });
   };
 

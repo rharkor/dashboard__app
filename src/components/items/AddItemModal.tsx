@@ -37,7 +37,7 @@ const AddItemModal: FC<{
   mode?: "create" | "edit";
   item?: Item;
 }> = ({ handleClose, visible, parent, mode = "create", item }) => {
-  const { createItem, updateItem, fetchItems } = useApi();
+  const { createItem, updateItem, fetchItems, refreshToken } = useApi();
 
   const [name, setName] = useState(item?.name || "");
   const [nameHaveChanged, setNameHaveChanged] = useState(false);
@@ -132,6 +132,27 @@ const AddItemModal: FC<{
     (document.getElementById("create-item-form") as HTMLFormElement)?.reset();
   };
 
+  const handleCopy = () => {
+    if (!item?.token) return;
+    navigator.clipboard
+      .writeText(`${window.location.origin}/${item.id}?token=${item.token}`)
+      .then(
+        () => {
+          toast.success("Copied to clipboard!");
+        },
+        (err) => {
+          toast.error("Failed to copy the link!");
+        }
+      );
+  };
+
+  const handleRefreshLink = () => {
+    if (!item?.id) return;
+    refreshToken(item.id.toString());
+    //? Refresh item
+    fetchItems(parent?.id.toString() || "");
+  };
+
   const footer = (
     <div className="flex justify-end flex-row gap-2">
       <Button
@@ -214,7 +235,7 @@ const AddItemModal: FC<{
 
   return (
     <Dialog
-      header="Create new item"
+      header={mode === "create" ? "Create new item" : "Edit item"}
       visible={visible}
       onHide={handleCloseCleanForm}
       onShow={handleShow}
@@ -268,6 +289,34 @@ const AddItemModal: FC<{
             </p>
           </div>
         </div>
+        {mode === "edit" && (
+          <div className="flex flex-col gap-2">
+            <label htmlFor="public-link">Public access link</label>
+            <span className="relative">
+              <InputText
+                id="public-link"
+                value={
+                  item?.token
+                    ? `${window.location.origin}/${item.id}?token=${item.token}`
+                    : ""
+                }
+                readOnly
+                disabled
+                className="w-full"
+              />
+              <div className="flex flex-row gap-2 absolute right-2 top-1/2 -translate-y-1/2">
+                {item?.token && (
+                  <Button className="!p-2" onClick={handleCopy} type="button">
+                    <i className="pi pi-copy"></i>
+                  </Button>
+                )}
+                <Button className="!p-2" onClick={handleRefreshLink}>
+                  <i className="pi pi-refresh"></i>
+                </Button>
+              </div>
+            </span>
+          </div>
+        )}
         <div className="flex flex-col gap-2">
           <label htmlFor="type">Type</label>
           <Dropdown
@@ -346,7 +395,7 @@ const AddItemModal: FC<{
                 }}
                 id="file"
               />
-              <Button label="Paste" onClick={handlePaste} />
+              <Button label="Paste" onClick={handlePaste} type="button" />
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-gray-500">
                   {file ? file.name : "No file chosen"}
