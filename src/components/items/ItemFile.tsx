@@ -2,12 +2,15 @@ import { useApi } from "@/contexts/ApiContext";
 import { ItemCardWrapper } from "./ItemCard";
 import ItemInnerCard from "./ItemInnerCard";
 import { ItemWithFile } from "../../../types/api";
+import { useSearchParams } from "next/navigation";
 
 const ItemFile = ({ item }: { item: ItemWithFile }) => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const { loadFile } = useApi();
 
   const handleClick = async () => {
-    const fileContent = await loadFile(item.file[0]);
+    const fileContent = await loadFile(item.file[0], token ?? undefined);
     if (!fileContent) return;
     const element = document.createElement("a");
     const newFile = new Blob([fileContent], { type: "text/plain" });

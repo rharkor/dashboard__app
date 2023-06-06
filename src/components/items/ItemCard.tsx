@@ -23,6 +23,7 @@ interface ItemCardProps {
   setFile: (file: FileWithContent | null) => void;
   editItem: (item: Item) => void;
   parentId?: string;
+  noEdit?: boolean;
 }
 
 export const ItemCardWrapper: FC<PropsWithChildren> = ({ children }) => {
@@ -48,7 +49,13 @@ const reduceTokens = [
   "!bg-[var(--primary-color-lighten-op)]",
 ];
 
-const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
+const ItemCard: FC<ItemCardProps> = ({
+  item,
+  setFile,
+  editItem,
+  parentId,
+  noEdit,
+}) => {
   const { type } = item;
   const { moveItem, fetchItems } = useApi();
 
@@ -68,6 +75,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
   const [isOver, setIsOver] = useState<null | string>(null);
 
   const restartPosition = () => {
+    if (noEdit) return;
     setMoveSelected(false);
     const originalPosition = parentDiv.current?.getBoundingClientRect();
     const currentSize = mainDiv.current?.getBoundingClientRect();
@@ -100,6 +108,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
   };
 
   const handleMouseUp: EventListenerOrEventListenerObject = (e) => {
+    if (noEdit) return;
     preventDefault(e);
     document.removeEventListener("mouseup", handleMouseUp);
     document.removeEventListener("pointerup", handleMouseUp);
@@ -119,6 +128,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
   };
 
   const handleMouseMove = (e: MouseEvent) => {
+    if (noEdit) return;
     preventDefault(e);
     const { clientX, clientY } = e;
 
@@ -148,9 +158,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
       setIsOver((mouseOverItem as HTMLDivElement).dataset.id || "-1");
     } else {
       resetMoveOverlay();
-      if (isOver !== null) {
-        setIsOver(null);
-      }
+      setIsOver(null);
     }
 
     setStyle({
@@ -168,6 +176,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
   };
 
   const handleMouseDown: EventListenerOrEventListenerObject = (e) => {
+    if (noEdit) return;
     preventDefault(e);
     let active = true;
     let moved = false;
@@ -207,6 +216,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
   };
 
   useEffect(() => {
+    if (noEdit) return;
     if (!initialOffset) return;
 
     document.addEventListener("mouseup", handleMouseUp);
@@ -225,6 +235,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
 
   const handleClick = useCallback(
     (e: any) => {
+      if (noEdit) return;
       if (moveSelected) {
         preventDefault(e);
 
@@ -242,6 +253,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
   );
 
   useEffect(() => {
+    if (noEdit) return;
     const el = mainDiv.current;
     if (!el) return;
     el.addEventListener("mousedown", handleMouseDown, true);
@@ -262,7 +274,7 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
     <div
       className={
         "w-[150px] h-[110px] relative shrink-0 md:w-[300px] md:h-[200px] max-w-[150px] md:max-w-[300px] transition-all duration-300 " +
-        (item.type === "group" ? "item-card" : "")
+        (item.type === "group" && !noEdit ? "item-card" : "")
       }
       ref={parentDiv}
       style={parentStyle}
@@ -286,20 +298,24 @@ const ItemCard: FC<ItemCardProps> = ({ item, setFile, editItem, parentId }) => {
         {type === "view" && <ItemView item={item} setFile={setFile} />}
         {type === "file" && <ItemFile item={item} />}
         {type === "group" && <ItemGroup item={item} />}
-        <EditItemOverlay
-          item={item}
-          selected={selected}
-          setSelected={setSelected}
-          editItem={editItem}
-        />
-        <div
-          className="absolute top-0 left-0 w-full h-full hidden"
-          ref={moveOverlay}
-        >
-          <div className="relative h-full">
-            <i className="pi pi-folder-open move-icon text-[var(--primary-color)] md:!text-7xl !text-4xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></i>
-          </div>
-        </div>
+        {!noEdit && (
+          <>
+            <EditItemOverlay
+              item={item}
+              selected={selected}
+              setSelected={setSelected}
+              editItem={editItem}
+            />
+            <div
+              className="absolute top-0 left-0 w-full h-full hidden"
+              ref={moveOverlay}
+            >
+              <div className="relative h-full">
+                <i className="pi pi-folder-open move-icon text-[var(--primary-color)] md:!text-7xl !text-4xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></i>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

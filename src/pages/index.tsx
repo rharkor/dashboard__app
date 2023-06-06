@@ -5,9 +5,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "primereact/button";
 import { useEffect, useState } from "react";
 import { Item } from "../../types/api";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function Home() {
-  const { items, itemsLoading, fetchItems } = useApi();
+  const router = useRouter();
+  const { items, fetchItems } = useApi();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const { isLogged } = useAuth();
 
   const [addItemModal, setAddItemModal] = useState(false);
@@ -33,9 +38,13 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (!isLogged) return;
-    fetchItems();
-  }, [fetchItems, isLogged]);
+    if (!router.isReady) return;
+    if (!isLogged && !token) {
+      router.push("/login");
+      return;
+    }
+    fetchItems(undefined, token);
+  }, [fetchItems, isLogged, token, router]);
 
   return (
     <div className="flex flex-col gap-4 w-full">

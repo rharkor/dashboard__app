@@ -3,6 +3,7 @@ import { ItemWithFile } from "../../../types/api";
 import { ItemCardWrapper } from "./ItemCard";
 import ItemInnerCard from "./ItemInnerCard";
 import { FileWithContent } from "./Items";
+import { useSearchParams } from "next/navigation";
 
 const ItemView = ({
   item,
@@ -11,10 +12,12 @@ const ItemView = ({
   item: ItemWithFile;
   setFile: (file: FileWithContent | null) => void;
 }) => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const { loadFile } = useApi();
 
   const handleClick = async () => {
-    const fileContent = await loadFile(item.file[0]);
+    const fileContent = await loadFile(item.file[0], token ?? undefined);
     setFile({
       ...item.file[0],
       content: fileContent,
