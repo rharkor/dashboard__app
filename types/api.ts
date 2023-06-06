@@ -15,6 +15,7 @@ type ItemBase = {
   logo?: File[];
   parent?: Item;
   children?: Item[];
+  token?: string;
 };
 
 export type ItemWithText = ItemBase & {

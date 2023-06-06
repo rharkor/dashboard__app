@@ -95,8 +95,9 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       setIsLogged(true);
       await _getUser();
     } else {
-      await goTo("/login");
+      // await goTo("/login");
       setIsLogged(false);
+      setIsLoading(false);
     }
     setInitialLoadFinished(true);
   };

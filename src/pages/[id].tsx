@@ -6,12 +6,14 @@ import { Item, ItemParent } from "../../types/api";
 import { Button } from "primereact/button";
 import AddItemModal from "@/components/items/AddItemModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSearchParams } from "next/navigation";
 
 const BreadCrumb: FC<{
   model?: {
     label: string;
     command: () => void;
     id: string;
+    forceHome?: boolean;
   }[];
 }> = ({ model }) => {
   return (
@@ -20,7 +22,7 @@ const BreadCrumb: FC<{
         <React.Fragment key={item.label}>
           <span
             className={
-              index === model.length - 1
+              index === model.length - 1 && !item.forceHome
                 ? "text-[var(--primary-color-lighten)]"
                 : "cursor-pointer hover:text-[var(--primary-color)]  arianne-item"
             }
@@ -39,8 +41,10 @@ const BreadCrumb: FC<{
 const HomeId = () => {
   const router = useRouter();
   const { id } = router.query;
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [parent, setParent] = useState<ItemParent>();
-  const { items, itemsLoading, fetchItems, fetchParent } = useApi();
+  const { items, fetchItems, fetchParent } = useApi();
   const { isLogged } = useAuth();
 
   const [addItemModal, setAddItemModal] = useState(false);
@@ -66,40 +70,56 @@ const HomeId = () => {
   };
 
   useEffect(() => {
-    if (!isLogged) return;
+    if (!router.isReady) return;
+    if (!isLogged && !token) {
+      router.push("/login");
+      return;
+    }
     if (id) {
-      fetchItems(id.toString());
-      fetchParent(id.toString()).then((parent) =>
+      fetchItems(id.toString(), token);
+      fetchParent(id.toString(), token).then((parent) =>
         setParent(parent || undefined)
       );
     }
-  }, [id, fetchItems, fetchParent, isLogged]);
+  }, [id, fetchItems, fetchParent, isLogged, token, router]);
 
-  const breadCrumbItems = [
-    {
+  const breadCrumbItems =
+    (parent?.parents ?? []).map((parent, i) => {
+      let forceHome = false;
+      if (i === 0 && token) forceHome = true;
+      return {
+        label: parent.name,
+        command: () =>
+          router.push(`/${parent.id}${token ? `?token=${token}` : ""}`),
+        id: parent.id.toString(),
+        forceHome,
+      };
+    }) || [];
+
+  if (!token) {
+    breadCrumbItems.unshift({
       label: "Home",
       command: () => router.push("/"),
       id: "",
-    },
-    ...(parent?.parents.map((parent) => ({
-      label: parent.name,
-      command: () => router.push(`/${parent.id}`),
-      id: parent.id.toString(),
-    })) || []),
-  ];
+      forceHome: false,
+    });
+  }
+
+  const breadCrumbArrowAction =
+    (breadCrumbItems?.length || 0) > 1
+      ? breadCrumbItems?.[breadCrumbItems.length - 2].command
+      : () => router.push("/");
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex gap-4 items-center">
-        <Button
-          icon="pi pi-arrow-left"
-          onClick={
-            (breadCrumbItems?.length || 0) > 1
-              ? breadCrumbItems?.[breadCrumbItems.length - 2].command
-              : () => router.push("/")
-          }
-          size="small"
-        />
+        {!token && (
+          <Button
+            icon="pi pi-arrow-left"
+            onClick={breadCrumbArrowAction}
+            size="small"
+          />
+        )}
         <h1
           className="text-2xl font-bold transition-all"
           style={{
@@ -114,21 +134,26 @@ const HomeId = () => {
         items={items}
         editItem={setEditingItem}
         parentId={id?.toString()}
+        noEdit={!!token}
       />
-      <Button
-        icon="pi pi-plus"
-        label="Add item"
-        className="!fixed bottom-4 right-4"
-        rounded
-        onClick={openAddItemModal}
-      />
-      <AddItemModal
-        handleClose={closeAddItemModal}
-        visible={addItemModal}
-        parent={parent}
-        mode={addItemModalMode}
-        item={editingItem}
-      />
+      {!token && (
+        <>
+          <Button
+            icon="pi pi-plus"
+            label="Add item"
+            className="!fixed bottom-4 right-4"
+            rounded
+            onClick={openAddItemModal}
+          />
+          <AddItemModal
+            handleClose={closeAddItemModal}
+            visible={addItemModal}
+            parent={parent}
+            mode={addItemModalMode}
+            item={editingItem}
+          />
+        </>
+      )}
     </div>
   );
 };

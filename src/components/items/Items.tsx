@@ -9,7 +9,8 @@ const Items: FC<{
   items: Item[];
   editItem: (item: Item) => void;
   parentId?: string;
-}> = ({ items, editItem, parentId }) => {
+  noEdit?: boolean;
+}> = ({ items, editItem, parentId, noEdit }) => {
   const [file, setFile] = useState<FileWithContent | null>(null);
 
   return (
@@ -21,6 +22,7 @@ const Items: FC<{
           setFile={setFile}
           editItem={editItem}
           parentId={parentId}
+          noEdit={noEdit}
         />
       ))}
       <FileViewDialog file={file} setFile={setFile} />

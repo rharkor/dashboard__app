@@ -18,15 +18,19 @@ import { toast } from "react-hot-toast";
 
 export type ApiContextType = {
   items: Item[];
-  fetchItems: (id?: string) => Promise<Item[]>;
+  fetchItems: (id?: string, token?: string | null) => Promise<Item[]>;
   itemsLoading: boolean;
-  loadFile: (file: File) => Promise<string>;
+  loadFile: (file: File, token?: string) => Promise<string>;
   createItem: (item: CreateItem) => Promise<void>;
   updateItem: (id: string, item: UpdateItem) => Promise<void>;
-  fetchParent: (id: string) => Promise<ItemParent | null>;
-  fetchItem: (id: string) => Promise<Item | null>;
+  fetchParent: (
+    id: string,
+    token?: string | null
+  ) => Promise<ItemParent | null>;
+  fetchItem: (id: string, token?: string | null) => Promise<Item | null>;
   deleteItem: (id: string, isGroup?: boolean) => Promise<void>;
   moveItem: (id: string, parentId: string) => Promise<void>;
+  refreshToken: (id: string) => Promise<void>;
 };
 
 const ApiContextInitialValue: ApiContextType = {
@@ -40,6 +44,7 @@ const ApiContextInitialValue: ApiContextType = {
   fetchItem: async () => null,
   deleteItem: async () => {},
   moveItem: async () => {},
+  refreshToken: async () => {},
 };
 
 const ApiContext = createContext<ApiContextType>(ApiContextInitialValue);
@@ -48,11 +53,13 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
   const [items, setItems] = useState<Item[]>([]);
   const [itemsLoading, setItemsLoading] = useState(false);
 
-  const fetchItems = useCallback(async (id?: string) => {
+  const fetchItems = useCallback(async (id?: string, token?: string | null) => {
     setItemsLoading(true);
     let data: Item[] = [];
     try {
-      data = await api.fetch(`items${id ? `/${id}` : ""}`);
+      data = await api.fetch(
+        `items${id ? `/${id}` : ""}${token ? "?token=" + token : ""}`
+      );
       setItems(data);
     } catch (error) {
       console.error(error);
@@ -62,9 +69,9 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
     return data;
   }, []);
 
-  const loadFile = async (file: File) => {
+  const loadFile = async (file: File, token?: string) => {
     const { path } = file;
-    const res = await api.fetchPlain(path);
+    const res = await api.fetchPlain(path + (token ? `?token=${token}` : ""));
     return res;
   };
 
@@ -134,13 +141,17 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
-  const fetchParent = useCallback(async (id: string) => {
-    const item = await api.fetch(`items/parent/${id}`);
+  const fetchParent = useCallback(async (id: string, token?: string | null) => {
+    const item = await api.fetch(
+      `items/parent/${id}${token ? "?token=" + token : ""}`
+    );
     return item;
   }, []);
 
-  const fetchItem = useCallback(async (id: string) => {
-    const item = await api.fetch(`items/one/${id}`);
+  const fetchItem = useCallback(async (id: string, token?: string | null) => {
+    const item = await api.fetch(
+      `items/one/${id}${token ? "?token=" + token : ""}`
+    );
     return item;
   }, []);
 
@@ -181,6 +192,24 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   }, []);
 
+  const refreshToken = useCallback(async (id: string) => {
+    const promise = new Promise<void>(async (resolve, reject) => {
+      try {
+        const res = await api.fetch(`items/generate-token/${id}`, {
+          method: "POST",
+        });
+        resolve(res);
+      } catch (error) {
+        reject(error);
+      }
+    });
+    await toast.promise(promise, {
+      loading: "Refreshing item...",
+      success: "Link regenerated",
+      error: (err) => err.message || "Failed to regenerated the link",
+    });
+  }, []);
+
   return (
     <ApiContext.Provider
       value={{
@@ -194,6 +223,7 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
         fetchItem,
         deleteItem,
         moveItem,
+        refreshToken,
       }}
     >
       {children}
