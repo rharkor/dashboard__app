@@ -254,6 +254,11 @@ const AddItemModal: FC<{
     setLogoHaveChanged(true);
   };
 
+  const onUploadFile = (e: any) => {
+    setFile(e.files[0]);
+    setFileHaveChanged(true);
+  };
+
   return (
     <Dialog
       header={mode === "create" ? "Create new item" : "Edit item"}
@@ -413,7 +418,7 @@ const AddItemModal: FC<{
                 cancelLabel="Cancel"
                 invalidFileSizeMessageSummary="File is too large"
                 invalidFileSizeMessageDetail="Maximum size is 10MB"
-                onUpload={onUpload}
+                onUpload={onUploadFile}
                 onValidationFail={() => {
                   toast.error("File is too large!");
                 }}
