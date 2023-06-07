@@ -17,7 +17,10 @@ const ItemView = ({
   const { loadFile } = useApi();
 
   const handleClick = async () => {
-    const fileContent = await loadFile(item.file[0], token ?? undefined);
+    const fileContent = (await loadFile(
+      item.file[0],
+      token ?? undefined
+    )) as string;
     setFile({
       ...item.file[0],
       content: fileContent,
