@@ -91,7 +91,11 @@ const AddItemModal: FC<{
   };
 
   const handleUpdate = async (e: any) => {
-    if ((type === "file" || type === "view") && (!file || file.size === 0)) {
+    if (
+      fileHaveChanged &&
+      (type === "file" || type === "view") &&
+      (!file || file.size === 0)
+    ) {
       toast.error("Please select a file");
       return;
     }
