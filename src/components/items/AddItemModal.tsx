@@ -249,6 +249,18 @@ const AddItemModal: FC<{
     clear();
   };
 
+  const invoiceUploadHandlerFile = (e: FileUploadHandlerEvent) => {
+    const {
+      files,
+      options: { clear },
+    } = e;
+    const [file] = files;
+    onUploadFile({
+      files: [file],
+    });
+    clear();
+  };
+
   const onUpload = (e: any) => {
     setLogo(e.files[0]);
     setLogoHaveChanged(true);
@@ -410,7 +422,7 @@ const AddItemModal: FC<{
               <FileUpload
                 mode="basic"
                 customUpload
-                uploadHandler={invoiceUploadHandler}
+                uploadHandler={invoiceUploadHandlerFile}
                 auto
                 maxFileSize={1024 * 1024 * 1024}
                 chooseLabel="Choose file"
