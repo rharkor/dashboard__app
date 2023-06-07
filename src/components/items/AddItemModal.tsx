@@ -1,10 +1,10 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
-import { FileUpload } from "primereact/fileupload";
+import { FileUpload, FileUploadHandlerEvent } from "primereact/fileupload";
 import { useApi } from "@/contexts/ApiContext";
 import {
   Item,
@@ -237,6 +237,23 @@ const AddItemModal: FC<{
     }
   };
 
+  const invoiceUploadHandler = (e: FileUploadHandlerEvent) => {
+    const {
+      files,
+      options: { clear },
+    } = e;
+    const [file] = files;
+    onUpload({
+      files: [file],
+    });
+    clear();
+  };
+
+  const onUpload = (e: any) => {
+    setLogo(e.files[0]);
+    setLogoHaveChanged(true);
+  };
+
   return (
     <Dialog
       header={mode === "create" ? "Create new item" : "Edit item"}
@@ -266,6 +283,7 @@ const AddItemModal: FC<{
               setName(e.target.value);
               setNameHaveChanged(true);
             }}
+            autoFocus
             required
           />
         </div>
@@ -273,7 +291,8 @@ const AddItemModal: FC<{
           <label htmlFor="logo">Logo</label>
           <FileUpload
             mode="basic"
-            url="/api/no-op"
+            customUpload
+            uploadHandler={invoiceUploadHandler}
             auto
             maxFileSize={1024 * 1024 * 1024}
             chooseLabel="Choose file"
@@ -281,9 +300,9 @@ const AddItemModal: FC<{
             cancelLabel="Cancel"
             invalidFileSizeMessageSummary="File is too large"
             invalidFileSizeMessageDetail="Maximum size is 10MB"
-            onUpload={(e) => {
-              setLogo(e.files[0]);
-              setLogoHaveChanged(true);
+            onUpload={onUpload}
+            onValidationFail={() => {
+              toast.error("File is too large!");
             }}
             id="logo-file"
           />
@@ -385,7 +404,8 @@ const AddItemModal: FC<{
             <div className="flex flex-col gap-2">
               <FileUpload
                 mode="basic"
-                url="/api/no-op"
+                customUpload
+                uploadHandler={invoiceUploadHandler}
                 auto
                 maxFileSize={1024 * 1024 * 1024}
                 chooseLabel="Choose file"
@@ -393,9 +413,9 @@ const AddItemModal: FC<{
                 cancelLabel="Cancel"
                 invalidFileSizeMessageSummary="File is too large"
                 invalidFileSizeMessageDetail="Maximum size is 10MB"
-                onUpload={(e) => {
-                  setFile(e.files[0]);
-                  setFileHaveChanged(true);
+                onUpload={onUpload}
+                onValidationFail={() => {
+                  toast.error("File is too large!");
                 }}
                 id="file"
               />
