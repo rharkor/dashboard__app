@@ -20,7 +20,7 @@ export type ApiContextType = {
   items: Item[];
   fetchItems: (id?: string, token?: string | null) => Promise<Item[]>;
   itemsLoading: boolean;
-  loadFile: (file: File, token?: string) => Promise<string>;
+  loadFile: (file: File, token?: string) => Promise<string | Blob>;
   createItem: (item: CreateItem) => Promise<void>;
   updateItem: (id: string, item: UpdateItem) => Promise<void>;
   fetchParent: (
@@ -71,7 +71,11 @@ const ApiProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const loadFile = async (file: File, token?: string) => {
     const { path } = file;
-    const res = await api.fetchPlain(path + (token ? `?token=${token}` : ""));
+    const res = await api.fetchPlain(
+      path + (token ? `?token=${token}` : ""),
+      undefined,
+      { readBlob: true }
+    );
     return res;
   };
 

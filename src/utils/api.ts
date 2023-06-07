@@ -42,8 +42,10 @@ const api = {
     options: RequestInit = {},
     supp: {
       noContentType?: boolean;
+      readBlob?: boolean;
     } = {
       noContentType: false,
+      readBlob: false,
     }
   ) => {
     options.headers = {
@@ -60,6 +62,7 @@ const api = {
     try {
       const res = await fetch(`/api/${url}`, options);
       if (!res.ok) throw res;
+      if (supp.readBlob) return await res.blob();
       return await res.text();
     } catch (err: any) {
       if (!err.json) throw { error: err };
